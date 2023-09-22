@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package imburse.scheduler.v2.create_timer;
+option csharp_namespace = "Imburse.FakeSchedulerService";
+
+service FakeScheduler {
+    rpc CreateTimer(CreateTimerRequest) returns (CreateTimerResponse);
+}
+
+message RequestEnvelope {
+    oneof request {
+        CreateTimerRequest create_timer_request = 1;
+    }
+}
+
+message CreateTimerRequest {
+    string timer_id = 1;
+    google.protobuf.Timestamp deliver_by = 2;
+    int32 delivery_window = 3;
+    string correlation_id = 4;
+
+    oneof target {
+        ServiceBusTarget service_bus_target = 5;
+    }
+
+    message ServiceBusTarget {
+        string queue_name = 1;
+        string expiry_message_label = 2;
+        bytes expiry_message_payload = 3;
+    }
+}
+
+message CreateTimerResponse {}
